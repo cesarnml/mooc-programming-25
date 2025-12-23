@@ -4,6 +4,7 @@ def line(num, word):
         print(num * "*")
     else:
         print(num * word[0])
+    word
 
 
 def box_of_hashes(height):

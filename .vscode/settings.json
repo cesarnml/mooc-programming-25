@@ -1,0 +1,5 @@
+{
+  "python.analysis.indexing": false,
+  "python.analysis.typeCheckingMode": "off",
+  "python.analysis.diagnosticMode": "openFilesOnly"
+}
