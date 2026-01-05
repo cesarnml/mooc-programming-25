@@ -1,5 +1,4 @@
 # Write your solution here
-from re import S
 
 
 def search_by_name(filename: str, name: str):
@@ -30,11 +29,35 @@ def create_recipe_map(recipes):
     for recipe in recipes:
         name = recipe[0]
         time = int(recipe[1])
-        recipe_map[name] = {}
-        recipe_map[name]["name"] = name
-        recipe_map[name]["time"] = time
-        recipe_map[name]["ingredients"] = recipe[2:]
+        recipe_map[name] = {"name": name, "time": time, "ingredients": recipe[2:]}
     return recipe_map
 
 
+def search_by_time(filename: str, time: int):
+    recipe_map = read_file(filename)
+    found_recipe = []
+    for recipe in recipe_map:
+        current_recipe = recipe_map[recipe]
+        if current_recipe["time"] <= time:
+            found_recipe.append(
+                f'{current_recipe["name"]}, preparation time {current_recipe["time"]} min'
+            )
+    return found_recipe
+
+
+def search_by_ingredient(filename: str, ingredient: str):
+    recipe_map = read_file(filename)
+    found_recipe = []
+    for recipe in recipe_map:
+        current_recipe = recipe_map[recipe]
+        ingredients = [x.lower() for x in current_recipe["ingredients"]]
+        if ingredient.lower() in ingredients:
+            found_recipe.append(
+                f'{current_recipe["name"]}, preparation time {current_recipe["time"]} min'
+            )
+    return found_recipe
+
+
+# print(search_by_ingredient("recipes1.txt", "eggs"))
 # print(search_by_name("recipes1.txt", "cake"))
+# print(search_by_time("recipes1.txt", 20))
