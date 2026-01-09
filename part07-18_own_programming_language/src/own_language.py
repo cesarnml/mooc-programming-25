@@ -3,81 +3,126 @@ import string
 
 
 def run(program: list[str]):
+    if len(program) == 0:
+        return []
+
     result = []
     execution_index = 0
     variables = {}
     locations = {}
+
     for i in range(len(program)):
         if ":" in program[i]:
-            locations[expression[:-1]] = i
-    breakpoint()
+            goto = program[i][:-1]
+            locations[goto] = i
+
     for char in string.ascii_uppercase:
         variables[char] = 0
+
     expression = program[execution_index]
+
     while expression != "END":
         cmd = expression.split(" ")[0]
-        if cmd == "MOV":
-            letter = expression.split(" ")[1]
-            value = expression.split(" ")[2]
-            if value in string.ascii_uppercase:
-                variables[letter] = variables[value]
-            else:
-                variables[letter] = int(value)
-        if cmd == "PRINT":
-            letter = expression.split(" ")[1]
-            result.append(variables[letter])
-        if cmd == "ADD":
-            letter = expression.split(" ")[1]
-            operand = expression.split(" ")[2]
-            if operand in variables:
-                variables[letter] += variables[operand]
-            else:
-                variables[letter] += int(operand)
-        if cmd == "SUB":
-            letter = expression.split(" ")[1]
-            operand = expression.split(" ")[2]
-            if operand in variables:
-                variables[letter] -= variables[operand]
-            else:
-                variables[letter] -= int(operand)
-        if cmd == "MUL":
-            letter = expression.split(" ")[1]
-            operand = expression.split(" ")[2]
-            if operand in variables:
-                variables[letter] *= variables[operand]
-            else:
-                variables[letter] *= int(operand)
-        if ":" in cmd:
-            locations[cmd[:-1]] = program.index(cmd)
-        if cmd == "JUMP":
-            goto = expression.split(" ")[1]
-            expression = program[locations[goto]]
+        try:
+            if cmd == "MOV":
+                letter = expression.split(" ")[1]
+                value = expression.split(" ")[2]
+                if value in string.ascii_uppercase:
+                    variables[letter] = variables[value]
+                else:
+                    variables[letter] = int(value)
+                execution_index += 1
+                expression = program[execution_index]
+            elif cmd == "PRINT":
+                letter = expression.split(" ")[1]
+                value = variables[letter] if letter in variables else int(letter)
+                result.append(value)
+                execution_index += 1
+                expression = program[execution_index]
+            elif cmd == "ADD":
+                letter = expression.split(" ")[1]
+                operand = expression.split(" ")[2]
+                if operand in variables:
+                    variables[letter] += variables[operand]
+                else:
+                    variables[letter] += int(operand)
+                execution_index += 1
+                expression = program[execution_index]
+            elif cmd == "SUB":
+                letter = expression.split(" ")[1]
+                operand = expression.split(" ")[2]
+                if operand in variables:
+                    variables[letter] -= variables[operand]
+                else:
+                    variables[letter] -= int(operand)
+                execution_index += 1
+                expression = program[execution_index]
+            elif cmd == "MUL":
+                letter = expression.split(" ")[1]
+                operand = expression.split(" ")[2]
+                if operand in variables:
+                    variables[letter] *= variables[operand]
+                else:
+                    variables[letter] *= int(operand)
+                execution_index += 1
+                expression = program[execution_index]
+            elif cmd == "JUMP":
+                goto = expression.split(" ")[1]
+                execution_index = locations[goto]
+                expression = program[execution_index]
+            elif cmd == "IF":
+                operand1 = expression.split(" ")[1]
+                operator = expression.split(" ")[2]
+                operand2 = expression.split(" ")[3]
+                goto = expression.split(" ")[5]
+                value1 = variables[operand1] if operand1 in variables else int(operand1)
+                value2 = variables[operand2] if operand2 in variables else int(operand2)
+                if operator == ">":
+                    if value1 > value2:
+                        execution_index = locations[goto]
+                        expression = program[execution_index]
+                    else:
+                        execution_index += 1
+                        expression = program[execution_index]
+                elif operator == "<":
+                    if value1 < value2:
+                        execution_index = locations[goto]
+                        expression = program[execution_index]
+                    else:
+                        execution_index += 1
+                        expression = program[execution_index]
+                elif operator == "<=":
+                    if value1 <= value2:
+                        execution_index = locations[goto]
+                        expression = program[execution_index]
+                    else:
+                        execution_index += 1
+                        expression = program[execution_index]
 
-
-program4 = []
-program4.append("MOV N 50")
-program4.append("PRINT 2")
-program4.append("MOV A 3")
-program4.append("begin:")
-program4.append("MOV B 2")
-program4.append("MOV Z 0")
-program4.append("test:")
-program4.append("MOV C B")
-program4.append("new:")
-program4.append("IF C == A JUMP error")
-program4.append("IF C > A JUMP over")
-program4.append("ADD C B")
-program4.append("JUMP new")
-program4.append("error:")
-program4.append("MOV Z 1")
-program4.append("JUMP over2")
-program4.append("over:")
-program4.append("ADD B 1")
-program4.append("IF B < A JUMP test")
-program4.append("over2:")
-program4.append("IF Z == 1 JUMP over3")
-program4.append("PRINT A")
-program4.append("over3:")
-program4.append("ADD A 1")
-program4.append("IF A <= N JUMP begin")
-result = run(program4)
+                elif operator == ">=":
+                    if value1 >= value2:
+                        execution_index = locations[goto]
+                        expression = program[execution_index]
+                    else:
+                        execution_index += 1
+                        expression = program[execution_index]
+                elif operator == "==":
+                    if value1 == value2:
+                        execution_index = locations[goto]
+                        expression = program[execution_index]
+                    else:
+                        execution_index += 1
+                        expression = program[execution_index]
+                elif operator == "!=":
+                    if value1 != value2:
+                        execution_index = locations[goto]
+                        expression = program[execution_index]
+                    else:
+                        execution_index += 1
+                        expression = program[execution_index]
+            else:
+                execution_index += 1
+                expression = program[execution_index]
+        except IndexError:
+            expression = "END"
+    return result
