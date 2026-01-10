@@ -2,14 +2,34 @@
 import string
 
 
-def run(program: list[str]):
-    if len(program) == 0:
-        return []
+def getValue(letterOrInt: str, variables: dict[str, int]) -> int:
+    return variables[letterOrInt] if letterOrInt in variables else int(letterOrInt)
 
-    result = []
+
+def evaluate(operand1: str, operator: str, operand2: str, variables: dict[str, int]):
+    value1 = getValue(operand1, variables)
+    value2 = getValue(operand2, variables)
+    if operator == ">":
+        return value1 > value2
+    elif operator == "<":
+        return value1 < value2
+    elif operator == "<=":
+        return value1 <= value2
+    elif operator == ">=":
+        return value1 >= value2
+    elif operator == "==":
+        return value1 == value2
+    elif operator == "!=":
+        return value1 != value2
+    else:
+        raise ValueError(f"Invalid operator: {operator}")
+
+
+def run(program: list[str]):
     execution_index = 0
     variables = {}
     locations = {}
+    result = []
 
     for i in range(len(program)):
         if ":" in program[i]:
@@ -19,110 +39,38 @@ def run(program: list[str]):
     for char in string.ascii_uppercase:
         variables[char] = 0
 
-    expression = program[execution_index]
+    while execution_index < len(program):
+        expression = program[execution_index]
+        if expression == "END":
+            break
 
-    while expression != "END":
-        cmd = expression.split(" ")[0]
-        try:
-            if cmd == "MOV":
-                letter = expression.split(" ")[1]
-                value = expression.split(" ")[2]
-                if value in string.ascii_uppercase:
-                    variables[letter] = variables[value]
-                else:
-                    variables[letter] = int(value)
-                execution_index += 1
-                expression = program[execution_index]
-            elif cmd == "PRINT":
-                letter = expression.split(" ")[1]
-                value = variables[letter] if letter in variables else int(letter)
-                result.append(value)
-                execution_index += 1
-                expression = program[execution_index]
-            elif cmd == "ADD":
-                letter = expression.split(" ")[1]
-                operand = expression.split(" ")[2]
-                if operand in variables:
-                    variables[letter] += variables[operand]
-                else:
-                    variables[letter] += int(operand)
-                execution_index += 1
-                expression = program[execution_index]
-            elif cmd == "SUB":
-                letter = expression.split(" ")[1]
-                operand = expression.split(" ")[2]
-                if operand in variables:
-                    variables[letter] -= variables[operand]
-                else:
-                    variables[letter] -= int(operand)
-                execution_index += 1
-                expression = program[execution_index]
-            elif cmd == "MUL":
-                letter = expression.split(" ")[1]
-                operand = expression.split(" ")[2]
-                if operand in variables:
-                    variables[letter] *= variables[operand]
-                else:
-                    variables[letter] *= int(operand)
-                execution_index += 1
-                expression = program[execution_index]
-            elif cmd == "JUMP":
-                goto = expression.split(" ")[1]
-                execution_index = locations[goto]
-                expression = program[execution_index]
-            elif cmd == "IF":
-                operand1 = expression.split(" ")[1]
-                operator = expression.split(" ")[2]
-                operand2 = expression.split(" ")[3]
-                goto = expression.split(" ")[5]
-                value1 = variables[operand1] if operand1 in variables else int(operand1)
-                value2 = variables[operand2] if operand2 in variables else int(operand2)
-                if operator == ">":
-                    if value1 > value2:
-                        execution_index = locations[goto]
-                        expression = program[execution_index]
-                    else:
-                        execution_index += 1
-                        expression = program[execution_index]
-                elif operator == "<":
-                    if value1 < value2:
-                        execution_index = locations[goto]
-                        expression = program[execution_index]
-                    else:
-                        execution_index += 1
-                        expression = program[execution_index]
-                elif operator == "<=":
-                    if value1 <= value2:
-                        execution_index = locations[goto]
-                        expression = program[execution_index]
-                    else:
-                        execution_index += 1
-                        expression = program[execution_index]
+        parts = expression.split(" ")
+        cmd = parts[0]
 
-                elif operator == ">=":
-                    if value1 >= value2:
-                        execution_index = locations[goto]
-                        expression = program[execution_index]
-                    else:
-                        execution_index += 1
-                        expression = program[execution_index]
-                elif operator == "==":
-                    if value1 == value2:
-                        execution_index = locations[goto]
-                        expression = program[execution_index]
-                    else:
-                        execution_index += 1
-                        expression = program[execution_index]
-                elif operator == "!=":
-                    if value1 != value2:
-                        execution_index = locations[goto]
-                        expression = program[execution_index]
-                    else:
-                        execution_index += 1
-                        expression = program[execution_index]
+        if cmd == "MOV":
+            variables[parts[1]] = getValue(parts[2], variables)
+            execution_index += 1
+        elif cmd == "PRINT":
+            result.append(getValue(parts[1], variables))
+            execution_index += 1
+        elif cmd == "ADD":
+            variables[parts[1]] += getValue(parts[2], variables)
+            execution_index += 1
+        elif cmd == "SUB":
+            variables[parts[1]] -= getValue(parts[2], variables)
+            execution_index += 1
+        elif cmd == "MUL":
+            variables[parts[1]] *= getValue(parts[2], variables)
+            execution_index += 1
+        elif cmd == "JUMP":
+            execution_index = locations[parts[1]]
+        elif cmd == "IF":
+            if evaluate(parts[1], parts[2], parts[3], variables):
+                execution_index = locations[parts[5]]
             else:
                 execution_index += 1
-                expression = program[execution_index]
-        except IndexError:
-            expression = "END"
+        else:
+            # Label or unknown command - just skip
+            execution_index += 1
+
     return result
