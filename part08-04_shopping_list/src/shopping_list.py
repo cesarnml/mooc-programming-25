@@ -16,6 +16,11 @@ class ShoppingList:
     def amount(self, n: int):
         return self.products[n - 1][1]
 
+
 # -------------------------
 # Write your solution here:
 # -------------------------
+def total_units(my_list: ShoppingList):
+    # Probably not kosher since I've directly reading the instance variables
+    # instead of using the instance method .amount()
+    return sum([product[1] for product in my_list.products])
