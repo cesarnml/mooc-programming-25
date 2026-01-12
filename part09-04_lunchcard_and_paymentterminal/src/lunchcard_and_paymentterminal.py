@@ -1,5 +1,6 @@
 # WRITE YOUR SOLUTION HERE:
 
+
 class LunchCard:
     def __init__(self, balance: float):
         self.balance = balance
@@ -8,9 +9,13 @@ class LunchCard:
         self.balance += amount
 
     def subtract_from_balance(self, amount: float):
-        pass
+        if self.balance >= amount:
+            self.balance -= amount
+            return True
+        return False
         # The amount should be subtracted from the balance only if there is enough money on the card
         # If the payment is successful, the method returns True, and otherwise it returns False
+
 
 class PaymentTerminal:
     def __init__(self):
@@ -25,27 +30,48 @@ class PaymentTerminal:
         # increase the number of lunches sold, and return the appropriate change.
         # If the payment passed as an argument is not large enough to cover the price,
         # the lunch is not sold, and the entire sum is returned.
-        pass
+        cost = 2.5
+        if payment >= cost:
+            self.funds += cost
+            self.lunches += 1
+            return payment - cost
+        return payment
 
-   def eat_special(self, payment: float):
+    def eat_special(self, payment: float):
         # A special lunch costs 4.30 euros.
         # Increase the value of the funds at the terminal by the price of the lunch,
         # increase the number of specials sold, and return the appropriate change.
         # If the payment passed as an argument is not large enough to cover the price,
         # the lunch is not sold, and the entire sum is returned.
-        pass
+        cost = 4.3
+        if payment >= cost:
+            self.funds += cost
+            self.specials += 1
+            return payment - cost
+        return payment
 
     def eat_lunch_lunchcard(self, card: LunchCard):
         # A regular lunch costs 2.50 euros.
         # If there is enough money on the card, subtract the price of the lunch from the balance
         # and return True. If not, return False.
-        pass
+        cost = 2.5
+        if card.balance >= cost:
+            card.balance -= cost
+            self.lunches += 1
+            return True
+        return False
 
     def eat_special_lunchcard(self, card: LunchCard):
         # A special lunch costs 4.30 euros.
         # If there is enough money on the card, subtract the price of the lunch from the balance
         # and return True. If not, return False.
-        pass
+        cost = 4.3
+        if card.balance >= cost:
+            card.balance -= cost
+            self.specials += 1
+            return True
+        return False
 
     def deposit_money_on_card(self, card: LunchCard, amount: float):
-        pass
+        self.funds += amount
+        card.balance += amount
