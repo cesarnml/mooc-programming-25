@@ -11,3 +11,16 @@ class Computer:
     @property
     def speed(self):
         return self.__speed
+
+
+class LaptopComputer(Computer):
+    def __init__(self, model, speed, weight: int):
+        super().__init__(model, speed)
+        self.__weight = weight
+
+    @property
+    def weight(self):
+        return self.__weight
+
+    def __str__(self):
+        return f"{self.model}, {self.speed} MHz, {self.weight} kg"
