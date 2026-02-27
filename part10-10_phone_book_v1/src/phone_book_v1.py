@@ -15,11 +15,17 @@ class PhoneBook:
             return None
         return self.__persons[name]
 
-
     def all_entries(self):
         return self.__persons
 
-class FileHandler():
+    def find_by_number(self, number: str):
+        for name, numbers in self.__persons.items():
+            if number in numbers:
+                return name
+        return "unknown number"
+
+
+class FileHandler:
     def __init__(self, filename):
         self.__filename = filename
 
@@ -27,7 +33,7 @@ class FileHandler():
         names = {}
         with open(self.__filename) as f:
             for line in f:
-                parts = line.strip().split(';')
+                parts = line.strip().split(";")
                 name, *numbers = parts
                 names[name] = numbers
         return names
@@ -37,7 +43,8 @@ class FileHandler():
             for name, numbers in phonebook.items():
                 line = [name] + numbers
                 f.write(";".join(line) + "\n")
-                
+
+
 class PhoneBookApplication:
     def __init__(self):
         self.__phonebook = PhoneBook()
@@ -53,6 +60,7 @@ class PhoneBookApplication:
         print("0 exit")
         print("1 add entry")
         print("2 search")
+        print("3 search by number")
 
     def add_entry(self):
         name = input("name: ")
@@ -68,9 +76,12 @@ class PhoneBookApplication:
         for number in numbers:
             print(number)
 
+    def search_by_number(self):
+        target = input("number: ")
+        print(self.__phonebook.find_by_number(target))
+
     def exit(self):
         self.__filehandler.save_file(self.__phonebook.all_entries())
-
 
     def execute(self):
         self.help()
@@ -84,9 +95,12 @@ class PhoneBookApplication:
                 self.add_entry()
             elif command == "2":
                 self.search()
+            elif command == "3":
+                self.search_by_number()
             else:
                 self.help()
 
-# when you run the tests, nothing apart from these two lines should be placed in the main function, outside any class definitions 
+
+# when you run the tests, nothing apart from these two lines should be placed in the main function, outside any class definitions
 application = PhoneBookApplication()
 application.execute()

@@ -20,3 +20,7 @@ class ShoppingList:
             return product
         else:
             raise StopIteration
+
+
+def products_in_shopping_list(shopping_list: ShoppingList, amount: int):
+    return [item[0] for item in shopping_list if item[1] >= amount]
