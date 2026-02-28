@@ -4,5 +4,14 @@ class Employee:
         self.name = name
         self.subordinates = []
 
-    def add_subordinate(self, employee: 'Employee'):
+    def add_subordinate(self, employee: "Employee"):
         self.subordinates.append(employee)
+
+
+def count_subordinates(employee: Employee):
+    """Recursively count the total number of subordinates an employee has"""
+    count = 0
+    for subordinate in employee.subordinates:
+        # Count this subordinate plus all of their subordinates
+        count += 1 + count_subordinates(subordinate)
+    return count

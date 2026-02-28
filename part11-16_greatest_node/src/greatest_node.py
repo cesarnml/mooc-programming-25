@@ -1,7 +1,22 @@
 # WRITE YOUR SOLUTION HERE:
 class Node:
-    """ Class is modeling single node in binary tree """
-    def __init__(self, value, left_child:'Node' = None, right_child:'Node' = None):
+    """Class is modeling single node in binary tree"""
+
+    def __init__(self, value, left_child: "Node" = None, right_child: "Node" = None):
         self.value = value
         self.left_child = left_child
         self.right_child = right_child
+
+
+def greatest_node(root: Node):
+    max_value = root.value
+
+    # Check left subtree
+    if root.left_child is not None:
+        max_value = max(max_value, greatest_node(root.left_child))
+
+    # Check right subtree
+    if root.right_child is not None:
+        max_value = max(max_value, greatest_node(root.right_child))
+
+    return max_value

@@ -5,6 +5,15 @@ class CourseAttempt:
         self.grade = grade
 
     def __str__(self):
-        return f"{self.student_name}, grade for the course {self.course_name} {self.grade}"
+        return (
+            f"{self.student_name}, grade for the course {self.course_name} {self.grade}"
+        )
+
 
 # Write your solution here
+def names_of_students(attempts: list):
+    return list(map(lambda a: a.student_name, attempts))
+
+
+def course_names(attempts: list):
+    return sorted(set(map(lambda a: a.course_name, attempts)))
